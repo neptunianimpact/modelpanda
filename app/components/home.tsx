@@ -30,6 +30,8 @@ import { type ClientApi, getClientApi } from "../client/api";
 import { useAccessStore } from "../store";
 import clsx from "clsx";
 import { initializeMcpSystem, isMcpEnabled } from "../mcp/actions";
+import { AuthProvider, useAuth } from "../lib/auth-context";
+import { LoginPage } from "./login";
 
 export function Loading(props: { noLogo?: boolean }) {
   return (
@@ -234,7 +236,9 @@ export function useLoadData() {
   }, []);
 }
 
-export function Home() {
+function AuthGate() {
+  const { user, loading } = useAuth();
+
   useSwitchTheme();
   useLoadData();
   useHtmlLang();
@@ -258,15 +262,42 @@ export function Home() {
     initMcp();
   }, []);
 
+  if (loading) {
+    return <Loading />;
+  }
+
+  // If no Supabase URL configured, fall back to original behavior (access code)
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!supabaseUrl) {
+    return (
+      <Router>
+        <Screen />
+      </Router>
+    );
+  }
+
+  // If user is not logged in, show login page
+  if (!user) {
+    return <LoginPage />;
+  }
+
+  return (
+    <Router>
+      <Screen />
+    </Router>
+  );
+}
+
+export function Home() {
   if (!useHasHydrated()) {
     return <Loading />;
   }
 
   return (
     <ErrorBoundary>
-      <Router>
-        <Screen />
-      </Router>
+      <AuthProvider>
+        <AuthGate />
+      </AuthProvider>
     </ErrorBoundary>
   );
 }
