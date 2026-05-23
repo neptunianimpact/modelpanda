@@ -27,7 +27,7 @@ const cn = {
     Later: "稍后再说",
     SaasTips: "配置太麻烦，想要立即使用",
     TopTips:
-      "🥳 NextChat AI 首发优惠，立刻解锁 OpenAI o1, GPT-4o, Claude-3.5 等最新大模型",
+      "🐼 欢迎使用 ModelPanda！一站式访问全球最优秀的 AI 模型，价格实惠。",
   },
   ChatItem: {
     ChatItemCount: (count: number) => `${count} 条对话`,
@@ -312,10 +312,10 @@ const cn = {
 
     Access: {
       SaasStart: {
-        Title: "使用 NextChat AI",
+        Title: "使用 ModelPanda",
         Label: "（性价比最高的方案）",
         SubTitle:
-          "由 NextChat 官方维护, 零配置开箱即用，支持 OpenAI o1, GPT-4o, Claude-3.5 等最新大模型",
+          "全球最优秀的 AI 模型聚合平台，DeepSeek、GPT、Claude、Gemini 等模型一站式访问",
         ChatNow: "立刻对话",
       },
       AccessCode: {

@@ -28,7 +28,7 @@ const en: LocaleType = {
     Later: "Later",
     SaasTips: "Too Complex, Use Immediately Now",
     TopTips:
-      "🥳 NextChat AI launch promotion: Instantly unlock the latest models like OpenAI o1, GPT-4o, Claude-3.5!",
+      "🐼 Welcome to ModelPanda! Access all the world's best AI models at one panda-sized price.",
   },
   ChatItem: {
     ChatItemCount: (count: number) => `${count} messages`,
@@ -315,11 +315,11 @@ const en: LocaleType = {
     },
     Access: {
       SaasStart: {
-        Title: "Use NextChat AI",
+        Title: "Use ModelPanda",
         Label: " (Most Cost-Effective Option)",
         SubTitle:
-          "Maintained by NextChat, zero setup needed, unlock OpenAI o1, GPT-4o," +
-          " Claude-3.5 and more",
+          "All the world's best AI models in one place. DeepSeek, GPT, Claude," +
+          " Gemini and more at unbeatable prices.",
         ChatNow: "Start Now",
       },
       AccessCode: {
@@ -640,7 +640,7 @@ const en: LocaleType = {
   },
   Store: {
     DefaultTopic: "New Conversation",
-    BotHello: "Hello! How can I assist you today?",
+    BotHello: "Hey there! I'm ModelPanda \ud83d\udc3c\nI can connect you to the world's best AI models. How can I help you today?",
     Error: "Something went wrong, please try again later.",
     Prompt: {
       History: (content: string) =>
