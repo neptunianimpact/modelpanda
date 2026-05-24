@@ -265,13 +265,26 @@ function useSubmitHandler() {
   const config = useAppConfig();
   const submitKey = config.submitKey;
   const isComposing = useRef(false);
+  const compositionEndTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const onCompositionStart = () => {
+      // Clear any pending timer when a new composition starts
+      if (compositionEndTimer.current) {
+        clearTimeout(compositionEndTimer.current);
+        compositionEndTimer.current = null;
+      }
       isComposing.current = true;
     };
     const onCompositionEnd = () => {
-      isComposing.current = false;
+      // Delay resetting isComposing to prevent the Enter key from
+      // compositionend being treated as a submit action.
+      // On macOS Chinese IME, compositionend fires before the keydown
+      // event for the Enter key that confirms the character selection.
+      compositionEndTimer.current = setTimeout(() => {
+        isComposing.current = false;
+        compositionEndTimer.current = null;
+      }, 300);
     };
 
     window.addEventListener("compositionstart", onCompositionStart);
@@ -280,6 +293,9 @@ function useSubmitHandler() {
     return () => {
       window.removeEventListener("compositionstart", onCompositionStart);
       window.removeEventListener("compositionend", onCompositionEnd);
+      if (compositionEndTimer.current) {
+        clearTimeout(compositionEndTimer.current);
+      }
     };
   }, []);
 
