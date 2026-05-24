@@ -21,12 +21,12 @@
     "test:ci": "node --no-warnings --experimental-vm-modules $(yarn bin jest) --ci"
   },
   "dependencies": {
-    "@supabase/ssr": "^0.5.0",
-    "@supabase/supabase-js": "^2.49.0",
     "@fortaine/fetch-event-source": "^3.0.6",
     "@hello-pangea/dnd": "^16.5.0",
     "@modelcontextprotocol/sdk": "^1.0.4",
     "@next/third-parties": "^14.1.0",
+    "@supabase/ssr": "^0.5.0",
+    "@supabase/supabase-js": "^2.49.0",
     "@svgr/webpack": "^6.5.1",
     "@vercel/analytics": "^0.1.11",
     "@vercel/speed-insights": "^1.0.2",
@@ -56,6 +56,7 @@
     "rt-client": "https://github.com/Azure-Samples/aoai-realtime-audio-sdk/releases/download/js/v0.5.0/rt-client-0.5.0.tgz",
     "sass": "^1.59.2",
     "spark-md5": "^3.0.2",
+    "stripe": "^17.0.0",
     "use-debounce": "^9.0.4",
     "zod": "^3.24.1",
     "zustand": "^4.3.8"

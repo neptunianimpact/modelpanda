@@ -331,6 +331,15 @@ export function SideBar(props: { className?: string }) {
               />
             </div>
             <div className={styles["sidebar-action"]}>
+              <Link to={Path.Pricing}>
+                <IconButton
+                  aria="Subscription"
+                  icon={<span style={{ fontSize: '16px' }}>⭐</span>}
+                  shadow
+                />
+              </Link>
+            </div>
+            <div className={styles["sidebar-action"]}>
               <Link to={Path.Settings}>
                 <IconButton
                   aria={Locale.Settings.Title}
