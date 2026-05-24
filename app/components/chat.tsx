@@ -99,6 +99,7 @@ import {
   showToast,
 } from "./ui-lib";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/app/lib/auth-context";
 import {
   CHAT_PAGE_SIZE,
   DEFAULT_TTS_ENGINE,
@@ -1031,6 +1032,7 @@ function _Chat() {
   const [hitBottom, setHitBottom] = useState(true);
   const isMobileScreen = useMobileScreen();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [attachImages, setAttachImages] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
 
@@ -1102,7 +1104,7 @@ function _Chat() {
     }
   };
 
-  const doSubmit = (userInput: string) => {
+  const doSubmit = async (userInput: string) => {
     if (userInput.trim() === "" && isEmpty(attachImages)) return;
     const matchCommand = chatCommands.match(userInput);
     if (matchCommand.matched) {
@@ -1111,6 +1113,31 @@ function _Chat() {
       matchCommand.invoke();
       return;
     }
+
+    // Check usage limit before sending
+    if (user?.id) {
+      try {
+        const usageRes = await fetch("/api/usage", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: user.id }),
+        });
+        if (usageRes.status === 429) {
+          const data = await usageRes.json();
+          const goToPricing = confirm(
+            `You've reached your daily limit of ${data.limit} messages. Upgrade to Pro for unlimited messages.`,
+          );
+          if (goToPricing) {
+            navigate(Path.Pricing);
+          }
+          return;
+        }
+      } catch (e) {
+        console.error("[Usage Check] Error:", e);
+        // If usage check fails, allow sending (fail open)
+      }
+    }
+
     setIsLoading(true);
     chatStore
       .onUserInput(userInput, attachImages)
