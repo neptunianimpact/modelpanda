@@ -21,9 +21,9 @@ export function getStripe(): Stripe {
 // Stripe configuration
 export const STRIPE_CONFIG = {
   proPriceId:
-    process.env.STRIPE_PRO_PRICE_ID || "price_1TaW5FALxcZaZQ5ArpasiT32",
-  proProductId: process.env.STRIPE_PRO_PRODUCT_ID || "prod_UZfPfFfluHdBnL",
-  webhookSecret: process.env.STRIPE_WEBHOOK_SECRET || "",
+    (process.env.STRIPE_PRO_PRICE_ID || "price_1TaW5FALxcZaZQ5ArpasiT32").trim(),
+  proProductId: (process.env.STRIPE_PRO_PRODUCT_ID || "prod_UZfPfFfluHdBnL").trim(),
+  webhookSecret: (process.env.STRIPE_WEBHOOK_SECRET || "").trim(),
 };
 
 // Plan limits
