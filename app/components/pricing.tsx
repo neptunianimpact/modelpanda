@@ -59,9 +59,27 @@ export function PricingPage() {
     try {
       const res = await fetch(`/api/usage?userId=${user?.id}`);
       const data = await res.json();
-      setUsage(data);
+      if (data && !data.error) {
+        setUsage(data);
+      } else {
+        // Default to free plan if API fails
+        setUsage({
+          plan: "free",
+          messagesUsed: 0,
+          messagesLimit: 20,
+          messagesRemaining: 20,
+          allowedModels: [],
+        });
+      }
     } catch (e) {
       console.error("Failed to fetch usage:", e);
+      setUsage({
+        plan: "free",
+        messagesUsed: 0,
+        messagesLimit: 20,
+        messagesRemaining: 20,
+        allowedModels: [],
+      });
     }
   }
 
