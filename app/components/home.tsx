@@ -31,7 +31,7 @@ import { useAccessStore } from "../store";
 import clsx from "clsx";
 import { initializeMcpSystem, isMcpEnabled } from "../mcp/actions";
 import { AuthProvider, useAuth } from "../lib/auth-context";
-import { LoginPage } from "./login";
+import { LandingPage } from "./landing";
 
 export function Loading(props: { noLogo?: boolean }) {
   return (
@@ -284,9 +284,9 @@ function AuthGate() {
     );
   }
 
-  // If user is not logged in, show login page
+  // If user is not logged in, show landing page
   if (!user) {
-    return <LoginPage />;
+    return <LandingPage />;
   }
 
   return (
