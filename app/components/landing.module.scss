@@ -734,21 +734,69 @@
   color: #3f3f46;
 }
 
-/* Responsive */
+/* Responsive - Tablet */
+@media (max-width: 1024px) {
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    min-height: auto;
+    text-align: center;
+  }
+
+  .hero-content {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .hero-actions {
+    justify-content: center;
+  }
+
+  .hero-btn-primary,
+  .hero-btn-secondary {
+    max-width: 320px;
+  }
+
+  .hero-note {
+    text-align: center;
+  }
+
+  .hero-visual {
+    order: -1;
+  }
+
+  .hero-mockup {
+    max-width: 420px;
+    margin: 0 auto;
+  }
+}
+
+/* Responsive - Mobile */
 @media (max-width: 768px) {
   .hero {
     grid-template-columns: 1fr;
-    padding: 120px 20px 60px;
-    gap: 40px;
+    padding: 80px 20px 40px;
+    gap: 32px;
     min-height: auto;
+    text-align: center;
+  }
+
+  .hero-content {
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  .hero-badge {
+    justify-content: center;
   }
 
   .hero-title {
-    font-size: 36px;
+    font-size: 32px;
+    letter-spacing: -1px;
   }
 
   .hero-subtitle {
-    font-size: 16px;
+    font-size: 15px;
   }
 
   .hero-actions {
@@ -756,9 +804,15 @@
     align-items: stretch;
   }
 
+  .hero-btn-primary,
   .hero-btn-secondary {
-    text-align: center;
+    max-width: 100%;
     justify-content: center;
+    text-align: center;
+  }
+
+  .hero-note {
+    text-align: center;
   }
 
   .hero-visual {
@@ -769,19 +823,59 @@
     display: none;
   }
 
+  .features {
+    padding: 60px 20px;
+  }
+
   .features-grid {
     grid-template-columns: 1fr;
+  }
+
+  .pricing {
+    padding: 60px 20px;
   }
 
   .pricing-grid {
     grid-template-columns: 1fr;
   }
 
+  .faq {
+    padding: 60px 20px;
+  }
+
+  .section-header {
+    margin-bottom: 36px;
+  }
+
   .section-title {
-    font-size: 28px;
+    font-size: 26px;
+  }
+
+  .section-subtitle {
+    font-size: 15px;
+  }
+
+  .social-proof {
+    padding: 30px 20px 40px;
   }
 
   .logo-row {
-    gap: 24px;
+    gap: 20px;
+  }
+
+  .logo-item {
+    font-size: 15px;
+  }
+
+  .feature-card {
+    padding: 24px;
+  }
+
+  .pricing-card {
+    padding: 28px;
+  }
+
+  .footer {
+    padding: 36px 20px;
   }
 }
