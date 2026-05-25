@@ -1,4 +1,12 @@
+# ModelPanda robots.txt
 User-agent: *
-Disallow: /
+Allow: /
+Disallow: /api/
+Disallow: /#/chat
+Disallow: /#/settings
+
 User-agent: vitals.vercel-insights.com
 Allow: /
+
+# Sitemap
+Sitemap: https://modelpanda.ai/sitemap.xml
