@@ -379,7 +379,7 @@ export function LandingPage() {
             <a href="mailto:support@modelpanda.ai">Contact</a>
           </div>
           <p className={styles["footer-copyright"]}>
-            &copy; 2026 ModelPanda. All rights reserved.
+            &copy; 2026 ModelPanda by Hong Kong Fulgur Arc Interactive Limited. All rights reserved.
           </p>
         </div>
       </footer>
