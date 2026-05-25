@@ -1048,7 +1048,7 @@ function _Chat() {
   const [hitBottom, setHitBottom] = useState(true);
   const isMobileScreen = useMobileScreen();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, session: authSession } = useAuth();
   const [attachImages, setAttachImages] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
 
@@ -1135,7 +1135,12 @@ function _Chat() {
       try {
         const usageRes = await fetch("/api/usage", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            ...(authSession?.access_token
+              ? { Authorization: `Bearer ${authSession.access_token}` }
+              : {}),
+          },
           body: JSON.stringify({ userId: user.id }),
         });
         if (usageRes.status === 429) {

@@ -8,12 +8,43 @@ function getSupabaseAdmin() {
   return createClient(supabaseUrl, supabaseServiceKey);
 }
 
+// Verify JWT token and return authenticated user ID
+async function verifyAuth(request: NextRequest): Promise<{ userId: string | null; error: string | null }> {
+  const authHeader = request.headers.get("Authorization");
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return { userId: null, error: "Missing or invalid Authorization header" };
+  }
+
+  const token = authHeader.replace("Bearer ", "");
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+  const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+  const { data: { user }, error } = await supabase.auth.getUser(token);
+  if (error || !user) {
+    return { userId: null, error: "Invalid or expired token" };
+  }
+
+  return { userId: user.id, error: null };
+}
+
 // GET - Get user's daily usage
 export async function GET(request: NextRequest) {
   try {
+    // Verify authentication
+    const auth = await verifyAuth(request);
+    if (auth.error) {
+      return NextResponse.json({ error: auth.error }, { status: 401 });
+    }
+
     const userId = request.nextUrl.searchParams.get("userId");
     if (!userId) {
       return NextResponse.json({ error: "Missing userId" }, { status: 400 });
+    }
+
+    // Ensure user can only query their own data
+    if (userId !== auth.userId) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     const supabase = getSupabaseAdmin();
@@ -57,9 +88,20 @@ export async function GET(request: NextRequest) {
 // POST - Increment usage count
 export async function POST(request: NextRequest) {
   try {
+    // Verify authentication
+    const auth = await verifyAuth(request);
+    if (auth.error) {
+      return NextResponse.json({ error: auth.error }, { status: 401 });
+    }
+
     const { userId } = await request.json();
     if (!userId) {
       return NextResponse.json({ error: "Missing userId" }, { status: 400 });
+    }
+
+    // Ensure user can only modify their own data
+    if (userId !== auth.userId) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     const supabase = getSupabaseAdmin();

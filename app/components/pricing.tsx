@@ -24,7 +24,7 @@ interface UsageInfo {
 }
 
 export function PricingPage() {
-  const { user } = useAuth();
+  const { user, session: authSession } = useAuth();
   const navigate = useNavigate();
   const [subscription, setSubscription] = useState<SubscriptionInfo | null>(
     null,
@@ -45,6 +45,11 @@ export function PricingPage() {
     try {
       const res = await fetch(
         `/api/stripe/subscription?userId=${user?.id}`,
+        {
+          headers: authSession?.access_token
+            ? { Authorization: `Bearer ${authSession.access_token}` }
+            : {},
+        },
       );
       const data = await res.json();
       setSubscription(data);
@@ -57,7 +62,11 @@ export function PricingPage() {
 
   async function fetchUsage() {
     try {
-      const res = await fetch(`/api/usage?userId=${user?.id}`);
+      const res = await fetch(`/api/usage?userId=${user?.id}`, {
+        headers: authSession?.access_token
+          ? { Authorization: `Bearer ${authSession.access_token}` }
+          : {},
+      });
       const data = await res.json();
       if (data && !data.error) {
         setUsage(data);
@@ -89,7 +98,12 @@ export function PricingPage() {
     try {
       const res = await fetch("/api/stripe/checkout", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(authSession?.access_token
+            ? { Authorization: `Bearer ${authSession.access_token}` }
+            : {}),
+        },
         body: JSON.stringify({
           userId: user.id,
           userEmail: user.email,
@@ -120,7 +134,12 @@ export function PricingPage() {
     try {
       const res = await fetch("/api/stripe/subscription", {
         method: "DELETE",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(authSession?.access_token
+            ? { Authorization: `Bearer ${authSession.access_token}` }
+            : {}),
+        },
         body: JSON.stringify({ userId: user.id }),
       });
       const data = await res.json();
