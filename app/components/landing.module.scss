@@ -101,12 +101,12 @@
 .hero {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 140px 24px 80px;
+  padding: 100px 24px 60px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 60px;
   align-items: center;
-  min-height: 100vh;
+  min-height: 90vh;
 }
 
 .hero-content {
