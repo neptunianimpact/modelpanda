@@ -31,6 +31,7 @@ import { useAccessStore } from "../store";
 import clsx from "clsx";
 import { initializeMcpSystem, isMcpEnabled } from "../mcp/actions";
 import { AuthProvider, useAuth } from "../lib/auth-context";
+import { CloudSyncProvider } from "./cloud-sync-provider";
 import { LandingPage } from "./landing";
 
 export function Loading(props: { noLogo?: boolean }) {
@@ -290,9 +291,11 @@ function AuthGate() {
   }
 
   return (
-    <Router>
-      <Screen />
-    </Router>
+    <CloudSyncProvider>
+      <Router>
+        <Screen />
+      </Router>
+    </CloudSyncProvider>
   );
 }
 
