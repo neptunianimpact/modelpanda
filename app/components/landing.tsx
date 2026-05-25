@@ -3,12 +3,48 @@ import styles from "./landing.module.scss";
 import { useAuth } from "../lib/auth-context";
 import BotIcon from "../icons/bot.svg";
 import clsx from "clsx";
+import { useEffect, useRef } from "react";
 
 export function LandingPage() {
   const { signInWithGoogle, loading } = useAuth();
+  const landingRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Intersection Observer for scroll-based fade-in animations
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add(styles["animate-in"]);
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" },
+    );
+
+    const elements = landingRef.current?.querySelectorAll(
+      `.${styles["animate-on-scroll"]}`,
+    );
+    elements?.forEach((el) => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, []);
+
+  // Smooth scroll handler
+  const handleSmoothScroll = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    targetId: string,
+  ) => {
+    e.preventDefault();
+    const target = landingRef.current?.querySelector(targetId);
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
 
   return (
-    <div className={styles["landing-page"]}>
+    <div className={styles["landing-page"]} ref={landingRef}>
       {/* Navigation */}
       <nav className={styles["nav"]}>
         <div className={styles["nav-inner"]}>
@@ -19,9 +55,21 @@ export function LandingPage() {
             <span className={styles["nav-name"]}>ModelPanda</span>
           </div>
           <div className={styles["nav-links"]}>
-            <a href="#features">Features</a>
-            <a href="#pricing">Pricing</a>
-            <a href="#faq">FAQ</a>
+            <a
+              href="#features"
+              onClick={(e) => handleSmoothScroll(e, "#features")}
+            >
+              Features
+            </a>
+            <a
+              href="#pricing"
+              onClick={(e) => handleSmoothScroll(e, "#pricing")}
+            >
+              Pricing
+            </a>
+            <a href="#faq" onClick={(e) => handleSmoothScroll(e, "#faq")}>
+              FAQ
+            </a>
           </div>
           <button
             className={styles["nav-cta"]}
@@ -35,7 +83,7 @@ export function LandingPage() {
 
       {/* Hero Section */}
       <section className={styles["hero"]}>
-        <div className={styles["hero-content"]}>
+        <div className={clsx(styles["hero-content"], styles["hero-animate"])}>
           <div className={styles["hero-badge"]}>
             <span className={styles["badge-dot"]}></span>
             Now available — 6 AI models in one place
@@ -78,7 +126,11 @@ export function LandingPage() {
               </svg>
               Start Free with Google
             </button>
-            <a href="#pricing" className={styles["hero-btn-secondary"]}>
+            <a
+              href="#pricing"
+              className={styles["hero-btn-secondary"]}
+              onClick={(e) => handleSmoothScroll(e, "#pricing")}
+            >
               View Pricing
             </a>
           </div>
@@ -86,7 +138,9 @@ export function LandingPage() {
             Free tier includes 20 messages/day. No credit card required.
           </p>
         </div>
-        <div className={styles["hero-visual"]}>
+        <div
+          className={clsx(styles["hero-visual"], styles["hero-animate-delay"])}
+        >
           <div className={styles["hero-mockup"]}>
             <div className={styles["mockup-header"]}>
               <div className={styles["mockup-dots"]}>
@@ -120,7 +174,9 @@ export function LandingPage() {
       </section>
 
       {/* Logos / Social Proof */}
-      <section className={styles["social-proof"]}>
+      <section
+        className={clsx(styles["social-proof"], styles["animate-on-scroll"])}
+      >
         <p className={styles["social-proof-text"]}>
           Powered by the world&apos;s leading AI models
         </p>
@@ -135,7 +191,12 @@ export function LandingPage() {
 
       {/* Features Section */}
       <section className={styles["features"]} id="features">
-        <div className={styles["section-header"]}>
+        <div
+          className={clsx(
+            styles["section-header"],
+            styles["animate-on-scroll"],
+          )}
+        >
           <h2 className={styles["section-title"]}>Why ModelPanda?</h2>
           <p className={styles["section-subtitle"]}>
             One subscription to rule them all. Switch between the best AI models
@@ -143,7 +204,13 @@ export function LandingPage() {
           </p>
         </div>
         <div className={styles["features-grid"]}>
-          <div className={styles["feature-card"]}>
+          <div
+            className={clsx(
+              styles["feature-card"],
+              styles["feature-card-1"],
+              styles["animate-on-scroll"],
+            )}
+          >
             <div className={styles["feature-icon"]}>
               <svg
                 viewBox="0 0 24 24"
@@ -166,7 +233,13 @@ export function LandingPage() {
               models mid-conversation to find the perfect answer.
             </p>
           </div>
-          <div className={styles["feature-card"]}>
+          <div
+            className={clsx(
+              styles["feature-card"],
+              styles["feature-card-2"],
+              styles["animate-on-scroll"],
+            )}
+          >
             <div className={styles["feature-icon"]}>
               <svg
                 viewBox="0 0 24 24"
@@ -187,7 +260,13 @@ export function LandingPage() {
               appear word by word as the AI thinks.
             </p>
           </div>
-          <div className={styles["feature-card"]}>
+          <div
+            className={clsx(
+              styles["feature-card"],
+              styles["feature-card-3"],
+              styles["animate-on-scroll"],
+            )}
+          >
             <div className={styles["feature-icon"]}>
               <svg
                 viewBox="0 0 24 24"
@@ -207,7 +286,13 @@ export function LandingPage() {
               or share it with third parties.
             </p>
           </div>
-          <div className={styles["feature-card"]}>
+          <div
+            className={clsx(
+              styles["feature-card"],
+              styles["feature-card-4"],
+              styles["animate-on-scroll"],
+            )}
+          >
             <div className={styles["feature-icon"]}>
               <svg
                 viewBox="0 0 24 24"
@@ -233,7 +318,12 @@ export function LandingPage() {
 
       {/* Pricing Section */}
       <section className={styles["pricing"]} id="pricing">
-        <div className={styles["section-header"]}>
+        <div
+          className={clsx(
+            styles["section-header"],
+            styles["animate-on-scroll"],
+          )}
+        >
           <h2 className={styles["section-title"]}>
             Simple, Transparent Pricing
           </h2>
@@ -242,7 +332,12 @@ export function LandingPage() {
           </p>
         </div>
         <div className={styles["pricing-grid"]}>
-          <div className={styles["pricing-card"]}>
+          <div
+            className={clsx(
+              styles["pricing-card"],
+              styles["animate-on-scroll"],
+            )}
+          >
             <div className={styles["pricing-card-header"]}>
               <h3 className={styles["pricing-plan-name"]}>Free</h3>
               <div className={styles["pricing-amount"]}>
@@ -270,7 +365,11 @@ export function LandingPage() {
             </button>
           </div>
           <div
-            className={clsx(styles["pricing-card"], styles["pricing-card-pro"])}
+            className={clsx(
+              styles["pricing-card"],
+              styles["pricing-card-pro"],
+              styles["animate-on-scroll"],
+            )}
           >
             <div className={styles["pricing-popular"]}>Most Popular</div>
             <div className={styles["pricing-card-header"]}>
@@ -303,7 +402,12 @@ export function LandingPage() {
             </button>
           </div>
         </div>
-        <p className={styles["pricing-compare"]}>
+        <p
+          className={clsx(
+            styles["pricing-compare"],
+            styles["animate-on-scroll"],
+          )}
+        >
           Compare: ChatGPT Plus is $20/mo for one model. ModelPanda Pro gives
           you 6 models for $12/mo.
         </p>
@@ -311,13 +415,20 @@ export function LandingPage() {
 
       {/* FAQ Section */}
       <section className={styles["faq"]} id="faq">
-        <div className={styles["section-header"]}>
+        <div
+          className={clsx(
+            styles["section-header"],
+            styles["animate-on-scroll"],
+          )}
+        >
           <h2 className={styles["section-title"]}>
             Frequently Asked Questions
           </h2>
         </div>
         <div className={styles["faq-list"]}>
-          <details className={styles["faq-item"]}>
+          <details
+            className={clsx(styles["faq-item"], styles["animate-on-scroll"])}
+          >
             <summary>How is ModelPanda different from ChatGPT?</summary>
             <p>
               ChatGPT only gives you access to OpenAI models. ModelPanda
@@ -326,7 +437,9 @@ export function LandingPage() {
               answers or find the best response for your specific task.
             </p>
           </details>
-          <details className={styles["faq-item"]}>
+          <details
+            className={clsx(styles["faq-item"], styles["animate-on-scroll"])}
+          >
             <summary>What AI models are available?</summary>
             <p>
               Currently we offer GPT-4o, GPT-4o Mini, DeepSeek R1, DeepSeek V3,
@@ -334,7 +447,9 @@ export function LandingPage() {
               models as they become available.
             </p>
           </details>
-          <details className={styles["faq-item"]}>
+          <details
+            className={clsx(styles["faq-item"], styles["animate-on-scroll"])}
+          >
             <summary>What are the limits on the free plan?</summary>
             <p>
               Free users can send up to 20 messages per day across all models.
@@ -342,7 +457,9 @@ export function LandingPage() {
               Pro for unlimited messages.
             </p>
           </details>
-          <details className={styles["faq-item"]}>
+          <details
+            className={clsx(styles["faq-item"], styles["animate-on-scroll"])}
+          >
             <summary>Can I cancel my subscription anytime?</summary>
             <p>
               Yes, absolutely. You can cancel your Pro subscription at any time
@@ -350,7 +467,9 @@ export function LandingPage() {
               until the end of your current billing period.
             </p>
           </details>
-          <details className={styles["faq-item"]}>
+          <details
+            className={clsx(styles["faq-item"], styles["animate-on-scroll"])}
+          >
             <summary>Is my data safe?</summary>
             <p>
               Yes. We use industry-standard encryption and never train AI models
@@ -374,12 +493,20 @@ export function LandingPage() {
             </p>
           </div>
           <div className={styles["footer-links"]}>
-            <a href="#pricing">Pricing</a>
-            <a href="#faq">FAQ</a>
+            <a
+              href="#pricing"
+              onClick={(e) => handleSmoothScroll(e, "#pricing")}
+            >
+              Pricing
+            </a>
+            <a href="#faq" onClick={(e) => handleSmoothScroll(e, "#faq")}>
+              FAQ
+            </a>
             <a href="mailto:support@modelpanda.ai">Contact</a>
           </div>
           <p className={styles["footer-copyright"]}>
-            &copy; 2026 ModelPanda by Hong Kong Fulgur Arc Interactive Limited. All rights reserved.
+            &copy; 2026 ModelPanda by Hong Kong Fulgur Arc Interactive Limited.
+            All rights reserved.
           </p>
         </div>
       </footer>
