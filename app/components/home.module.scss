@@ -45,7 +45,7 @@
   background-color: var(--second);
   display: flex;
   flex-direction: column;
-  box-shadow: inset -2px 0px 2px 0px rgb(0, 0, 0, 0.05);
+  box-shadow: inset -1px 0px 0px 0px rgba(255, 255, 255, 0.05);
   position: relative;
   transition: width ease 0.05s;
 
@@ -175,15 +175,19 @@
 .chat-item {
   padding: 10px 14px;
   background-color: var(--white);
-  border-radius: 10px;
+  border-radius: 12px;
   margin-bottom: 10px;
   box-shadow: var(--card-shadow);
-  transition: background-color 0.3s ease;
+  transition: all 0.2s ease;
   cursor: pointer;
   user-select: none;
-  border: 2px solid transparent;
+  border: 1px solid transparent;
   position: relative;
   content-visibility: auto;
+
+  &:hover {
+    transform: translateX(2px);
+  }
 }
 
 .chat-item:hover {
@@ -192,6 +196,8 @@
 
 .chat-item-selected {
   border-color: var(--primary);
+  background-color: var(--second);
+  box-shadow: 0 0 0 1px var(--primary), var(--card-shadow);
 }
 
 .chat-item-title {
