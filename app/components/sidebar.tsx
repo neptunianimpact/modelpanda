@@ -254,7 +254,7 @@ export function SideBar(props: { className?: string }) {
     >
       <SideBarHeader
         title="ModelPanda"
-        subTitle="All the world's best AI. One panda-sized price."
+        subTitle="All the world's best AI. One simple subscription."
         logo={<ChatGptIcon />}
         shouldNarrow={shouldNarrow}
       >

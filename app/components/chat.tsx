@@ -1145,12 +1145,15 @@ function _Chat() {
         });
         if (usageRes.status === 429) {
           const data = await usageRes.json();
-          const goToPricing = confirm(
-            `You've reached your daily limit of ${data.limit} messages. Upgrade to Pro for unlimited messages.`,
+          showToast(
+            `Daily limit reached (${data.limit} msgs). Join Pro Waitlist for unlimited access!`,
+            {
+              text: "Join Waitlist",
+              onClick: () => {
+                navigate(Path.Pricing);
+              },
+            },
           );
-          if (goToPricing) {
-            navigate(Path.Pricing);
-          }
           return;
         }
       } catch (e) {

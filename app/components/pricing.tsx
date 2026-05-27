@@ -96,7 +96,8 @@ export function PricingPage() {
     if (!user) return;
     setUpgrading(true);
     try {
-      const res = await fetch("/api/stripe/checkout", {
+      // Temporary Waitlist mode while payment is blocked
+      const res = await fetch("/api/waitlist", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -106,17 +107,17 @@ export function PricingPage() {
         },
         body: JSON.stringify({
           userId: user.id,
-          userEmail: user.email,
+          email: user.email,
         }),
       });
       const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url;
+      if (data.success) {
+        alert("You've been added to the Pro Waitlist! We'll notify you as soon as subscriptions are available. Early birds get a special discount!");
       } else {
-        alert("Failed to create checkout session. Please try again.");
+        alert(data.msg || "Something went wrong. Please try again.");
       }
     } catch (e) {
-      console.error("Failed to create checkout:", e);
+      console.error("Failed to join waitlist:", e);
       alert("Something went wrong. Please try again.");
     } finally {
       setUpgrading(false);
@@ -170,7 +171,7 @@ export function PricingPage() {
       <div className={styles["pricing-header"]}>
         <h1>Subscription</h1>
         <p className={styles["pricing-subtitle"]}>
-          All the world&apos;s best AI. One panda-sized price.
+          All the world&apos;s best AI. One simple subscription.
         </p>
       </div>
 
@@ -280,7 +281,7 @@ export function PricingPage() {
               onClick={handleUpgrade}
               disabled={upgrading}
             >
-              {upgrading ? "Redirecting..." : "Upgrade to Pro"}
+              {upgrading ? "Joining..." : "Join Pro Waitlist"}
             </button>
           )}
         </div>

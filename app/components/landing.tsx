@@ -4,8 +4,11 @@ import { useAuth } from "../lib/auth-context";
 import BotIcon from "../icons/bot.svg";
 import clsx from "clsx";
 import { useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { Path } from "../constant";
 
 export function LandingPage() {
+  const navigate = useNavigate();
   const { signInWithGoogle, loading } = useAuth();
   const landingRef = useRef<HTMLDivElement>(null);
 
@@ -76,7 +79,7 @@ export function LandingPage() {
             onClick={signInWithGoogle}
             disabled={loading}
           >
-            Get Started
+            Join Waitlist
           </button>
         </div>
       </nav>
@@ -92,7 +95,7 @@ export function LandingPage() {
             All the world&apos;s best AI.
             <br />
             <span className={styles["hero-gradient"]}>
-              One panda-sized price.
+              One simple subscription.
             </span>
           </h1>
           <p className={styles["hero-subtitle"]}>
@@ -124,7 +127,7 @@ export function LandingPage() {
                   d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                 />
               </svg>
-              Start Free with Google
+              Join Pro Waitlist
             </button>
             <a
               href="#pricing"
@@ -398,7 +401,7 @@ export function LandingPage() {
               onClick={signInWithGoogle}
               disabled={loading}
             >
-              Get Started
+              Join Waitlist
             </button>
           </div>
         </div>
@@ -489,7 +492,7 @@ export function LandingPage() {
             </div>
             <span className={styles["footer-name"]}>ModelPanda</span>
             <p className={styles["footer-tagline"]}>
-              All the world&apos;s best AI. One panda-sized price.
+              All the world&apos;s best AI. One simple subscription.
             </p>
           </div>
           <div className={styles["footer-links"]}>
@@ -498,6 +501,15 @@ export function LandingPage() {
               onClick={(e) => handleSmoothScroll(e, "#pricing")}
             >
               Pricing
+            </a>
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate(Path.Compare);
+              }}
+            >
+              Compare
             </a>
             <a href="#faq" onClick={(e) => handleSmoothScroll(e, "#faq")}>
               FAQ

@@ -10,7 +10,7 @@ import { getServerSideConfig } from "./config/server";
 
 export const metadata: Metadata = {
   title: {
-    default: "ModelPanda - All the World's Best AI. One Panda-Sized Price.",
+    default: "ModelPanda - All the World's Best AI. One Simple Subscription.",
     template: "%s | ModelPanda",
   },
   description:
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://modelpanda.ai",
     siteName: "ModelPanda",
-    title: "ModelPanda - All the World's Best AI. One Panda-Sized Price.",
+    title: "ModelPanda - All the World's Best AI. One Simple Subscription.",
     description:
       "Access GPT-4o, DeepSeek, Gemini, and more top AI models through a single interface. One subscription, 6 AI models, $12/month.",
     images: [
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "ModelPanda - All the World's Best AI. One Panda-Sized Price.",
+    title: "ModelPanda - All the World's Best AI. One Simple Subscription.",
     description:
       "Access GPT-4o, DeepSeek, Gemini, and more top AI models through a single interface. $12/month for unlimited access.",
     images: ["/og-image.png"],

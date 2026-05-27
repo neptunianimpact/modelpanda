@@ -33,7 +33,8 @@ export const PLAN_LIMITS = {
     models: ["deepseek-chat", "gpt-4o-mini", "gemini-2.5-flash"],
   },
   pro: {
-    messagesPerDay: -1, // unlimited
+    messagesPerDay: 200, // Fair Use Limit
+    premiumModelLimit: 50, // Limit for GPT-4o, Gemini Pro, etc.
     models: [
       "deepseek-chat",
       "deepseek-reasoner",
@@ -42,5 +43,6 @@ export const PLAN_LIMITS = {
       "gemini-2.5-flash",
       "gemini-2.5-pro",
     ],
+    premiumModels: ["gpt-4o", "gemini-2.5-pro", "deepseek-reasoner"],
   },
 };

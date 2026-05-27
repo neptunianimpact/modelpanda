@@ -55,6 +55,7 @@ export enum Path {
   SearchChat = "/search-chat",
   McpMarket = "/mcp-market",
   Pricing = "/pricing",
+  Compare = "/compare",
 }
 
 export enum ApiPath {

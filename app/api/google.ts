@@ -23,6 +23,31 @@ export async function handle(
     });
   }
 
+  // Usage Check & Fair Use Policy
+  const authToken = req.headers.get("Authorization") ?? "";
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (supabaseUrl && supabaseAnonKey && authToken.startsWith("Bearer ") && !authToken.includes("sk-")) {
+    try {
+      const { createClient } = require("@supabase/supabase-js");
+      const supabase = createClient(supabaseUrl, supabaseAnonKey);
+      const token = authToken.replace("Bearer ", "");
+      const { data: { user } } = await supabase.auth.getUser(token);
+      if (user) {
+        const { checkUsage, incrementUsage } = await import("./usage/check");
+        const clonedBody = await req.clone().json();
+        const model = clonedBody.model || "gemini-pro";
+        const check = await checkUsage(user.id, model);
+        if (!check.allowed) {
+          return NextResponse.json({ error: true, msg: check.error }, { status: 429 });
+        }
+        await incrementUsage(user.id, model);
+      }
+    } catch (e) {
+      console.error("[Google Usage Check] failed:", e);
+    }
+  }
+
   const bearToken =
     req.headers.get("x-goog-api-key") || req.headers.get("Authorization") || "";
   const token = bearToken.trim().replaceAll("Bearer ", "").trim();
