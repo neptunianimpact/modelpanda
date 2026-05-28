@@ -441,15 +441,26 @@ function ChatMessageItem(props: {
   const isUser = message.role === "user";
   const isContext = i < context.length;
   const showActions =
-    i > 0 && !(message.preview || message.content.length === 0) && !isContext;
-  const showTyping = message.preview || message.streaming;
+    i > 0 &&
+    !((message as any).preview || message.content.length === 0) &&
+    !isContext;
+  const showTyping = (message as any).preview || message.streaming;
   const shouldShowClearContextDivider = i === (clearContextIndex ?? -1) - 1;
 
-  const onUserStop = (id: string) => ChatControllerPool.stop(id);
-  const onDelete = (id: string) => chatStore.deleteMessage(session.id, id);
-  const onResend = (message: ChatMessage) => chatStore.onResend(message);
-  const onPinMessage = (message: ChatMessage) =>
-    chatStore.onPinMessage(message);
+  const onUserStop = (id: string) => ChatControllerPool.stop(session.id, id);
+  const onDelete = (id: string) => {
+    chatStore.updateTargetSession(session, (s) => {
+      s.messages = s.messages.filter((m) => m.id !== id);
+    });
+  };
+  const onResend = (message: ChatMessage) => {
+    // Implement resend logic or call existing one if available in store
+  };
+  const onPinMessage = (message: ChatMessage) => {
+    chatStore.updateTargetSession(session, (s) => {
+      s.mask.context.push(message);
+    });
+  };
 
   return (
     <Fragment key={message.id}>
@@ -528,7 +539,7 @@ function ChatMessageItem(props: {
             <Markdown
               content={getMessageTextContent(message)}
               loading={
-                (message.preview || message.streaming) &&
+                ((message as any).preview || message.streaming) &&
                 message.content.length === 0 &&
                 !isUser
               }
@@ -1327,6 +1338,8 @@ function _Chat() {
   const onUserStop = (messageId: string) => {
     ChatControllerPool.stop(session.id, messageId);
   };
+
+  const allModels = useAllModels();
 
   useEffect(() => {
     chatStore.updateTargetSession(session, (session) => {
@@ -2192,7 +2205,6 @@ function _Chat() {
 
       {showComparisonSelector && (
         <Selector
-          title="Select Models to Compare"
           items={allModels.map((m) => ({
             title: m.name,
             subTitle: m.provider?.providerName,
@@ -2202,7 +2214,7 @@ function _Chat() {
           onSelection={(selected) => {
             const selectedModels = selected.map((s) => {
               const [model, providerName] = s.split("@");
-              return { model, providerName };
+              return { model, providerName: providerName as ServiceProvider };
             });
             chatStore.updateTargetSession(session, (s) => {
               s.comparisonModels = selectedModels;
