@@ -93,6 +93,12 @@ export interface ChatSession {
   clearContextIndex?: number;
 
   mask: Mask;
+  // Split View
+  isComparison?: boolean;
+  comparisonModels?: Array<{
+    model: ModelType;
+    providerName: ServiceProvider;
+  }>;
 }
 
 export const DEFAULT_TOPIC = Locale.Store.DefaultTopic;
@@ -410,7 +416,44 @@ export const useChatStore = createPersistStore(
         isMcpResponse?: boolean,
       ) {
         const session = get().currentSession();
-        const modelConfig = session.mask.modelConfig;
+
+        // If it's a comparison session, trigger parallel requests
+        if (session.isComparison && session.comparisonModels) {
+          return Promise.all(
+            session.comparisonModels.map((m) =>
+              get().onUserInputToTarget(
+                content,
+                attachImages,
+                isMcpResponse,
+                session,
+                {
+                  ...session.mask.modelConfig,
+                  model: m.model,
+                  providerName: m.providerName,
+                },
+              ),
+            ),
+          );
+        }
+
+        return get().onUserInputToTarget(
+          content,
+          attachImages,
+          isMcpResponse,
+          session,
+          session.mask.modelConfig,
+        );
+      },
+
+      async onUserInputToTarget(
+        content: string,
+        attachImages?: string[],
+        isMcpResponse?: boolean,
+        targetSession?: ChatSession,
+        targetModelConfig?: ModelConfig,
+      ) {
+        const session = targetSession || get().currentSession();
+        const modelConfig = targetModelConfig || session.mask.modelConfig;
 
         // MCP Response no need to fill template
         let mContent: string | MultimodalContent[] = isMcpResponse
@@ -442,7 +485,6 @@ export const useChatStore = createPersistStore(
         // get recent messages
         const recentMessages = await get().getMessagesWithMemory();
         const sendMessages = recentMessages.concat(userMessage);
-        const messageIndex = session.messages.length + 1;
 
         // save user's and bot's message
         get().updateTargetSession(session, (session) => {
@@ -450,10 +492,20 @@ export const useChatStore = createPersistStore(
             ...userMessage,
             content: mContent,
           };
-          session.messages = session.messages.concat([
-            savedUserMessage,
-            botMessage,
-          ]);
+          // For comparison mode, only add user message once
+          const hasUserMessage = session.messages.some(
+            (m) =>
+              m.role === "user" &&
+              JSON.stringify(m.content) === JSON.stringify(mContent),
+          );
+          if (session.isComparison && hasUserMessage) {
+            session.messages = session.messages.concat([botMessage]);
+          } else {
+            session.messages = session.messages.concat([
+              savedUserMessage,
+              botMessage,
+            ]);
+          }
         });
 
         const api: ClientApi = getClientApi(modelConfig.providerName);
@@ -509,10 +561,7 @@ export const useChatStore = createPersistStore(
             get().updateTargetSession(session, (session) => {
               session.messages = session.messages.concat();
             });
-            ChatControllerPool.remove(
-              session.id,
-              botMessage.id ?? messageIndex,
-            );
+            ChatControllerPool.remove(session.id, botMessage.id);
 
             console.error("[Chat] failed ", error);
           },
