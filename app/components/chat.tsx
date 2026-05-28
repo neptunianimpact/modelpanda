@@ -1921,6 +1921,20 @@ function _Chat() {
             >
               {!session.topic ? DEFAULT_TOPIC : session.topic}
             </div>
+            <div className={styles["split-view-badge-container"]}>
+              <div
+                className={clsx(styles["split-view-badge"], {
+                  [styles["active"]]: session.isComparison,
+                })}
+                onClick={toggleComparison}
+              >
+                <div className={styles["split-view-icon"]}>
+                  <div className={styles["icon-part-left"]} />
+                  <div className={styles["icon-part-right"]} />
+                </div>
+                <span>Split View</span>
+              </div>
+            </div>
             <div className="window-header-sub-title">
               {Locale.Chat.SubTitle(session.messages.length)}
             </div>
@@ -1937,15 +1951,7 @@ function _Chat() {
                 }}
               />
             </div>
-            <div className="window-action-button">
-              <IconButton
-                icon={<McpToolIcon />}
-                bordered
-                title="Split View"
-                onClick={toggleComparison}
-                className={session.isComparison ? styles["active-action"] : ""}
-              />
-            </div>
+
             {!isMobileScreen && (
               <div className="window-action-button">
                 <IconButton
