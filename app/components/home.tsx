@@ -293,17 +293,16 @@ function AuthGate() {
     );
   }
 
-  // If user is not logged in, show landing page
-  if (!user) {
-    return <LandingPage />;
-  }
-
   return (
-    <CloudSyncProvider>
-      <Router>
-        <Screen />
-      </Router>
-    </CloudSyncProvider>
+    <Router>
+      {!user ? (
+        <LandingPage />
+      ) : (
+        <CloudSyncProvider>
+          <Screen />
+        </CloudSyncProvider>
+      )}
+    </Router>
   );
 }
 
