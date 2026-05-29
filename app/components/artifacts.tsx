@@ -24,6 +24,7 @@ import styles from "./artifacts.module.scss";
 
 type HTMLPreviewProps = {
   code: string;
+  type?: "html" | "svg" | "mermaid";
   autoHeight?: boolean;
   height?: number | string;
   onLoad?: (title?: string) => void;
@@ -80,11 +81,21 @@ export const HTMLPreview = forwardRef<HTMLPreviewHandler, HTMLPreviewProps>(
 
     const srcDoc = useMemo(() => {
       const script = `<script>window.addEventListener("DOMContentLoaded", () => new ResizeObserver((entries) => parent.postMessage({id: '${frameId}', height: entries[0].target.clientHeight}, '*')).observe(document.body))</script>`;
-      if (props.code.includes("<!DOCTYPE html>")) {
-        props.code.replace("<!DOCTYPE html>", "<!DOCTYPE html>" + script);
+      let html = props.code;
+
+      if (props.type === "svg") {
+        html = `<!DOCTYPE html><html><head><style>body { margin: 0; padding: 10px; background: #f5f5f5; }</style></head><body>${props.code}</body></html>`;
+      } else if (props.type === "mermaid") {
+        html = `<!DOCTYPE html><html><head><script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script><style>body { margin: 0; padding: 10px; background: #f5f5f5; } .mermaid { display: flex; justify-content: center; }</style></head><body><div class="mermaid">${props.code}</div><script>mermaid.contentLoaded();</script></body></html>`;
       }
-      return script + props.code;
-    }, [props.code, frameId]);
+
+      if (html.includes("<!DOCTYPE html>")) {
+        html = html.replace("<!DOCTYPE html>", "<!DOCTYPE html>" + script);
+      } else {
+        html = script + html;
+      }
+      return html;
+    }, [props.code, props.type, frameId]);
 
     const handleOnLoad = () => {
       if (props?.onLoad) {
@@ -97,7 +108,7 @@ export const HTMLPreview = forwardRef<HTMLPreviewHandler, HTMLPreviewProps>(
         className={styles["artifacts-iframe"]}
         key={frameId}
         ref={iframeRef}
-        sandbox="allow-forms allow-modals allow-scripts"
+        sandbox="allow-forms allow-modals allow-scripts allow-same-origin"
         style={{ height }}
         srcDoc={srcDoc}
         onLoad={handleOnLoad}
@@ -105,6 +116,38 @@ export const HTMLPreview = forwardRef<HTMLPreviewHandler, HTMLPreviewProps>(
     );
   },
 );
+
+/**
+ * Detect code artifacts from markdown content
+ */
+export function detectArtifacts(content: string): Array<{
+  type: "html" | "svg" | "mermaid";
+  code: string;
+  language: string;
+}> {
+  const artifacts: Array<{
+    type: "html" | "svg" | "mermaid";
+    code: string;
+    language: string;
+  }> = [];
+  const codeBlockRegex = /```([\w-]+)\n([\s\S]*?)```/g;
+  let match;
+
+  while ((match = codeBlockRegex.exec(content)) !== null) {
+    const language = match[1]?.toLowerCase() || "";
+    const code = match[2].trim();
+
+    if (["html", "svg", "mermaid"].includes(language) && code.length > 20) {
+      artifacts.push({
+        type: language as "html" | "svg" | "mermaid",
+        code,
+        language,
+      });
+    }
+  }
+
+  return artifacts;
+}
 
 export function ArtifactsShareButton({
   getCode,
