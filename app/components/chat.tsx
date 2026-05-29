@@ -122,6 +122,12 @@ import { getModelProvider } from "../utils/model";
 import { RealtimeChat } from "@/app/components/realtime-chat";
 import clsx from "clsx";
 import { getAvailableClientsCount, isMcpEnabled } from "../mcp/actions";
+import {
+  detectArtifacts,
+  ArtifactsSidePanel,
+  type ArtifactItem,
+} from "./artifacts";
+import EyeIcon from "../icons/eye.svg";
 
 const localStorage = safeLocalStorage();
 
@@ -425,6 +431,7 @@ function ChatMessageItem(props: {
   fontFamily: string;
   scrollRef: RefObject<HTMLDivElement>;
   clearContextIndex?: number;
+  onOpenArtifacts?: (artifacts: ArtifactItem[]) => void;
 }) {
   const {
     message,
@@ -435,10 +442,23 @@ function ChatMessageItem(props: {
     fontFamily,
     scrollRef,
     clearContextIndex,
+    onOpenArtifacts,
   } = props;
   const chatStore = useChatStore();
   const config = useAppConfig();
   const isUser = message.role === "user";
+
+  // Detect artifacts in assistant messages
+  const messageArtifacts = useMemo(() => {
+    if (isUser || (message as any).preview || message.streaming) return [];
+    const content = getMessageTextContent(message);
+    if (!content) return [];
+    return detectArtifacts(content).map((a, idx) => ({
+      ...a,
+      id: `${message.id ?? i}-artifact-${idx}`,
+      messageIndex: i,
+    })) as ArtifactItem[];
+  }, [message.id, message.streaming, isUser, i]);
   const isContext = i < context.length;
   const showActions =
     i > 0 &&
@@ -549,6 +569,19 @@ function ChatMessageItem(props: {
               defaultShow={i >= (session.messages.length ?? 0) - 6}
             />
           </div>
+          {/* Artifacts preview button */}
+          {messageArtifacts.length > 0 && onOpenArtifacts && (
+            <button
+              className={styles["chat-message-artifacts-btn"]}
+              onClick={() => onOpenArtifacts(messageArtifacts)}
+            >
+              <EyeIcon />
+              {Locale.Chat.Actions.OpenArtifacts}
+              {messageArtifacts.length > 1
+                ? ` (${messageArtifacts.length})`
+                : ""}
+            </button>
+          )}
         </div>
       </div>
       {shouldShowClearContextDivider && <ClearContextDivider />}
@@ -1875,6 +1908,19 @@ function _Chat() {
 
   const [showChatSidePanel, setShowChatSidePanel] = useState(false);
 
+  // Artifacts side panel state
+  const [showArtifactsPanel, setShowArtifactsPanel] = useState(false);
+  const [currentArtifacts, setCurrentArtifacts] = useState<ArtifactItem[]>([]);
+
+  const handleOpenArtifacts = useCallback((artifacts: ArtifactItem[]) => {
+    setCurrentArtifacts(artifacts);
+    setShowArtifactsPanel(true);
+  }, []);
+
+  const handleCloseArtifacts = useCallback(() => {
+    setShowArtifactsPanel(false);
+  }, []);
+
   // Split View: Toggle comparison mode
   const toggleComparison = () => {
     chatStore.updateTargetSession(session, (session) => {
@@ -2048,6 +2094,7 @@ function _Chat() {
                               fontSize={fontSize}
                               fontFamily={fontFamily}
                               scrollRef={scrollRef}
+                              onOpenArtifacts={handleOpenArtifacts}
                             />
                           ))}
                         </div>
@@ -2083,6 +2130,7 @@ function _Chat() {
                     fontFamily={fontFamily}
                     scrollRef={scrollRef}
                     clearContextIndex={clearContextIndex}
+                    onOpenArtifacts={handleOpenArtifacts}
                   />
                 ))
               )}
@@ -2188,6 +2236,20 @@ function _Chat() {
                 onStartVoice={async () => {
                   console.log("start voice");
                 }}
+              />
+            )}
+          </div>
+
+          {/* Artifacts side panel — slides in from right alongside chat */}
+          <div
+            className={clsx(styles["chat-artifacts-panel"], {
+              [styles["chat-artifacts-panel-show"]]: showArtifactsPanel,
+            })}
+          >
+            {showArtifactsPanel && (
+              <ArtifactsSidePanel
+                artifacts={currentArtifacts}
+                onClose={handleCloseArtifacts}
               />
             )}
           </div>

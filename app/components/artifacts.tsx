@@ -5,6 +5,7 @@ import {
   useMemo,
   forwardRef,
   useImperativeHandle,
+  useCallback,
 } from "react";
 import { useParams } from "react-router";
 import { IconButton } from "./button";
@@ -15,6 +16,7 @@ import DownloadIcon from "../icons/download.svg";
 import GithubIcon from "../icons/github.svg";
 import LoadingButtonIcon from "../icons/loading.svg";
 import ReloadButtonIcon from "../icons/reload.svg";
+import CloseIcon from "../icons/close.svg";
 import Locale from "../locales";
 import { Modal, showToast } from "./ui-lib";
 import { copyToClipboard, downloadAs } from "../utils";
@@ -242,6 +244,114 @@ export function ArtifactsShareButton({
         </div>
       )}
     </>
+  );
+}
+
+// ──────────────────────────────────────────────────────────────────────────
+// ArtifactsSidePanel — Chat-integrated preview panel (Step 2)
+// ──────────────────────────────────────────────────────────────────────────
+
+export type ArtifactItem = {
+  id: string;
+  type: "html" | "svg" | "mermaid";
+  code: string;
+  language: string;
+  /** Which message this artifact belongs to (for display) */
+  messageIndex: number;
+};
+
+export function ArtifactsSidePanel(props: {
+  artifacts: ArtifactItem[];
+  onClose: () => void;
+}) {
+  const { artifacts, onClose } = props;
+  const [activeIndex, setActiveIndex] = useState(0);
+  const previewRef = useRef<HTMLPreviewHandler>(null);
+
+  // Reset to first tab when artifacts list changes
+  useEffect(() => {
+    setActiveIndex(0);
+  }, [artifacts.length]);
+
+  const activeArtifact = artifacts[activeIndex];
+
+  const tabLabel = useCallback((item: ArtifactItem, idx: number) => {
+    const typeLabel =
+      item.type === "mermaid"
+        ? "Diagram"
+        : item.type === "svg"
+        ? "SVG"
+        : "HTML";
+    return `${typeLabel} ${idx + 1}`;
+  }, []);
+
+  return (
+    <div className={styles["artifacts-side-panel"]}>
+      {/* Header */}
+      <div className={styles["artifacts-side-panel-header"]}>
+        <span className={styles["artifacts-side-panel-title"]}>
+          {Locale.Chat.Artifacts.Title}
+        </span>
+        <IconButton
+          icon={<CloseIcon />}
+          bordered
+          onClick={onClose}
+          title={Locale.Chat.Artifacts.Close}
+        />
+      </div>
+
+      {artifacts.length === 0 ? (
+        <div className={styles["artifacts-side-panel-empty"]}>
+          {Locale.Chat.Artifacts.Empty}
+        </div>
+      ) : (
+        <>
+          {/* Tabs */}
+          {artifacts.length > 1 && (
+            <div className={styles["artifacts-side-panel-tabs"]}>
+              {artifacts.map((item, idx) => (
+                <button
+                  key={item.id}
+                  className={[
+                    styles["artifacts-tab"],
+                    idx === activeIndex ? styles["artifacts-tab-active"] : "",
+                  ].join(" ")}
+                  onClick={() => setActiveIndex(idx)}
+                >
+                  {tabLabel(item, idx)}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Preview area */}
+          {activeArtifact && (
+            <div className={styles["artifacts-side-panel-content"]}>
+              <div className={styles["artifacts-side-panel-toolbar"]}>
+                <span className={styles["artifacts-type-badge"]}>
+                  {activeArtifact.language.toUpperCase()}
+                </span>
+                <IconButton
+                  icon={<ReloadButtonIcon />}
+                  bordered
+                  onClick={() => previewRef.current?.reload()}
+                  title="Reload"
+                />
+                <ArtifactsShareButton getCode={() => activeArtifact.code} />
+              </div>
+              <HTMLPreview
+                ref={previewRef}
+                key={activeArtifact.id}
+                code={activeArtifact.code}
+                type={activeArtifact.type}
+                autoHeight={false}
+                height="100%"
+              />
+            </div>
+          )}
+        </>
+      )}
+    </div>
   );
 }
 

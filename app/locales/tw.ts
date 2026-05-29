@@ -55,6 +55,12 @@ const tw = {
       Edit: "編輯",
       RefreshTitle: "重新整理標題",
       RefreshToast: "已傳送重新整理標題請求",
+      OpenArtifacts: "預覽",
+    },
+    Artifacts: {
+      Title: "Artifacts 預覽",
+      Empty: "此對話暫無可預覽的 Artifacts",
+      Close: "關閉",
     },
     Commands: {
       new: "新建聊天",

@@ -59,6 +59,12 @@ const en: LocaleType = {
       RefreshToast: "Title refresh request sent",
       Speech: "Play",
       StopSpeech: "Stop",
+      OpenArtifacts: "Preview",
+    },
+    Artifacts: {
+      Title: "Artifacts Preview",
+      Empty: "No Artifacts in this conversation",
+      Close: "Close",
     },
     Commands: {
       new: "Start a new chat",
@@ -640,7 +646,8 @@ const en: LocaleType = {
   },
   Store: {
     DefaultTopic: "New Conversation",
-    BotHello: "Hey there! I'm ModelPanda \ud83d\udc3c\nI can connect you to the world's best AI models. How can I help you today?",
+    BotHello:
+      "Hey there! I'm ModelPanda \ud83d\udc3c\nI can connect you to the world's best AI models. How can I help you today?",
     Error: "Something went wrong, please try again later.",
     Prompt: {
       History: (content: string) =>

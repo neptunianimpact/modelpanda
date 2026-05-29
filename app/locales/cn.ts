@@ -58,6 +58,12 @@ const cn = {
       RefreshToast: "已发送刷新标题请求",
       Speech: "朗读",
       StopSpeech: "停止",
+      OpenArtifacts: "预览",
+    },
+    Artifacts: {
+      Title: "Artifacts 预览",
+      Empty: "此对话暂无可预览的 Artifacts",
+      Close: "关闭",
     },
     Commands: {
       new: "新建聊天",
