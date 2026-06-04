@@ -65,6 +65,11 @@ const en: LocaleType = {
       Title: "Artifacts Preview",
       Empty: "No Artifacts in this conversation",
       Close: "Close",
+      Copy: "Copy Code",
+      Download: "Download File",
+      Fullscreen: "Fullscreen",
+      ExitFullscreen: "Exit Fullscreen",
+      CopySuccess: "Code copied!",
     },
     Commands: {
       new: "Start a new chat",

@@ -106,6 +106,26 @@
   }
 }
 
+// Step 3: Fullscreen mode
+.artifacts-side-panel-fullscreen {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 9999;
+  border-left: none !important;
+  border-radius: 0 !important;
+}
+
+.artifacts-side-panel-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .artifacts-tab {
   padding: 4px 10px;
   border-radius: 6px;

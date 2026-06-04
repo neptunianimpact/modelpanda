@@ -266,12 +266,24 @@ export function ArtifactsSidePanel(props: {
 }) {
   const { artifacts, onClose } = props;
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const previewRef = useRef<HTMLPreviewHandler>(null);
 
   // Reset to first tab when artifacts list changes
   useEffect(() => {
     setActiveIndex(0);
   }, [artifacts.length]);
+
+  // Close fullscreen on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isFullscreen) {
+        setIsFullscreen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isFullscreen]);
 
   const activeArtifact = artifacts[activeIndex];
 
@@ -285,19 +297,55 @@ export function ArtifactsSidePanel(props: {
     return `${typeLabel} ${idx + 1}`;
   }, []);
 
+  const handleCopy = useCallback(() => {
+    if (!activeArtifact) return;
+    copyToClipboard(activeArtifact.code);
+    showToast(Locale.Chat.Artifacts.CopySuccess);
+  }, [activeArtifact]);
+
+  const handleDownload = useCallback(() => {
+    if (!activeArtifact) return;
+    const ext =
+      activeArtifact.type === "mermaid"
+        ? "mmd"
+        : activeArtifact.type === "svg"
+        ? "svg"
+        : "html";
+    downloadAs(activeArtifact.code, `artifact.${ext}`);
+  }, [activeArtifact]);
+
+  const panelClass = [
+    styles["artifacts-side-panel"],
+    isFullscreen ? styles["artifacts-side-panel-fullscreen"] : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
-    <div className={styles["artifacts-side-panel"]}>
+    <div className={panelClass}>
       {/* Header */}
       <div className={styles["artifacts-side-panel-header"]}>
         <span className={styles["artifacts-side-panel-title"]}>
           {Locale.Chat.Artifacts.Title}
         </span>
-        <IconButton
-          icon={<CloseIcon />}
-          bordered
-          onClick={onClose}
-          title={Locale.Chat.Artifacts.Close}
-        />
+        <div className={styles["artifacts-side-panel-header-actions"]}>
+          <IconButton
+            icon={isFullscreen ? <CloseIcon /> : <ExportIcon />}
+            bordered
+            onClick={() => setIsFullscreen((v) => !v)}
+            title={
+              isFullscreen
+                ? Locale.Chat.Artifacts.ExitFullscreen
+                : Locale.Chat.Artifacts.Fullscreen
+            }
+          />
+          <IconButton
+            icon={<CloseIcon />}
+            bordered
+            onClick={onClose}
+            title={Locale.Chat.Artifacts.Close}
+          />
+        </div>
       </div>
 
       {artifacts.length === 0 ? (
@@ -336,6 +384,18 @@ export function ArtifactsSidePanel(props: {
                   bordered
                   onClick={() => previewRef.current?.reload()}
                   title="Reload"
+                />
+                <IconButton
+                  icon={<CopyIcon />}
+                  bordered
+                  onClick={handleCopy}
+                  title={Locale.Chat.Artifacts.Copy}
+                />
+                <IconButton
+                  icon={<DownloadIcon />}
+                  bordered
+                  onClick={handleDownload}
+                  title={Locale.Chat.Artifacts.Download}
                 />
                 <ArtifactsShareButton getCode={() => activeArtifact.code} />
               </div>

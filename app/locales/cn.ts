@@ -64,6 +64,11 @@ const cn = {
       Title: "Artifacts 预览",
       Empty: "此对话暂无可预览的 Artifacts",
       Close: "关闭",
+      Copy: "复制代码",
+      Download: "下载文件",
+      Fullscreen: "全屏预览",
+      ExitFullscreen: "退出全屏",
+      CopySuccess: "代码已复制",
     },
     Commands: {
       new: "新建聊天",

@@ -61,6 +61,11 @@ const tw = {
       Title: "Artifacts 預覽",
       Empty: "此對話暫無可預覽的 Artifacts",
       Close: "關閉",
+      Copy: "複製代碼",
+      Download: "下載檔案",
+      Fullscreen: "全屏預覽",
+      ExitFullscreen: "退出全屏",
+      CopySuccess: "代碼已複製",
     },
     Commands: {
       new: "新建聊天",
